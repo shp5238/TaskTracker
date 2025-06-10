@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit2, Trash2, Calendar, User, Check } from "lucide-react";
+import { Plus, Edit2, Trash2, Calendar, User, Check, Save, X, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Task, InsertTask } from "@shared/schema";
@@ -20,8 +21,17 @@ export function TodoList() {
     assignedTo: "",
     completed: false,
   });
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editForm, setEditForm] = useState<InsertTask>({
+    title: "",
+    description: "",
+    dueDate: "",
+    assignedTo: "",
+    completed: false,
+  });
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("created");
+  const [currentTask, setCurrentTask] = useState<Task | null>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -73,6 +83,61 @@ export function TodoList() {
   const deleteTask = (id: number) => {
     deleteTaskMutation.mutate(id);
   };
+
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
+    setEditForm({
+      title: task.title,
+      description: task.description || "",
+      dueDate: task.dueDate || "",
+      assignedTo: task.assignedTo || "",
+      completed: task.completed,
+    });
+  };
+
+  const handleSaveEdit = () => {
+    if (editingTask && editForm.title.trim()) {
+      updateTaskMutation.mutate({
+        id: editingTask.id,
+        updates: editForm,
+      });
+      setEditingTask(null);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTask(null);
+    setEditForm({
+      title: "",
+      description: "",
+      dueDate: "",
+      assignedTo: "",
+      completed: false,
+    });
+  };
+
+  const handleSetCurrentTask = (task: Task) => {
+    setCurrentTask(task);
+    localStorage.setItem('currentTask', JSON.stringify(task));
+    toast({ title: "Current task set", description: `Now focusing on: ${task.title}` });
+  };
+
+  const getCurrentTaskFromStorage = () => {
+    try {
+      const stored = localStorage.getItem('currentTask');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // Initialize current task from localStorage
+  useState(() => {
+    const storedTask = getCurrentTaskFromStorage();
+    if (storedTask) {
+      setCurrentTask(storedTask);
+    }
+  });
 
   const getTaskStatus = (task: Task) => {
     if (task.completed) return "completed";

@@ -1,25 +1,39 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Moon, Sun } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { PomodoroTimer } from "@/components/pomodoro-timer";
 import { TodoList } from "@/components/todo-list";
 import { CalendarView } from "@/components/calendar-view";
 import { Notepad } from "@/components/notepad";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function Home() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Check className="h-4 w-4 text-white" />
             </div>
-            <h1 className="text-xl font-semibold text-gray-900">TaskFlow</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">TaskFlow</h1>
           </div>
           
-          <PomodoroTimer />
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              className="w-8 h-8 p-0"
+            >
+              {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            </Button>
+            <PomodoroTimer />
+          </div>
         </div>
       </header>
 
