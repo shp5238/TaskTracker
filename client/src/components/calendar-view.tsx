@@ -83,10 +83,10 @@ export function CalendarView() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">{getMonthName(currentDate)}</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{getMonthName(currentDate)}</h2>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm" onClick={goToPreviousMonth}>
                 <ChevronLeft className="h-4 w-4" />
@@ -117,16 +117,16 @@ export function CalendarView() {
               return (
                 <div
                   key={index}
-                  className={`min-h-20 p-2 border border-gray-100 hover:bg-gray-50 cursor-pointer ${
-                    isCurrentDay ? 'bg-blue-50 border-primary' : ''
+                  className={`min-h-20 p-2 border border-gray-100 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${
+                    isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20 border-primary' : 'bg-white dark:bg-gray-800'
                   }`}
                 >
                   <div className={`text-sm ${
                     day.isCurrentMonth 
                       ? isCurrentDay 
                         ? 'text-primary font-semibold' 
-                        : 'text-gray-900'
-                      : 'text-gray-400'
+                        : 'text-gray-900 dark:text-gray-100'
+                      : 'text-gray-400 dark:text-gray-500'
                   }`}>
                     {day.date.getDate()}
                   </div>
@@ -162,9 +162,9 @@ export function CalendarView() {
       </Card>
 
       {/* Upcoming Tasks Sidebar */}
-      <Card>
+      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <CardContent className="p-6">
-          <h3 className="font-semibold text-gray-900 mb-4">Upcoming Tasks</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Upcoming Tasks</h3>
           {upcomingTasks.length === 0 ? (
             <p className="text-gray-500 text-sm">No upcoming tasks</p>
           ) : (
@@ -172,13 +172,13 @@ export function CalendarView() {
               {upcomingTasks.map(task => {
                 const isOverdue = new Date(task.dueDate!) < new Date();
                 return (
-                  <div key={task.id} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50">
+                  <div key={task.id} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
                     <div className={`w-3 h-3 rounded-full ${
                       isOverdue ? 'bg-red-500' : 'bg-orange-500'
                     }`}></div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900">{task.title}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{task.title}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         {new Date(task.dueDate!).toLocaleDateString()} - {isOverdue ? 'Overdue' : 'Due soon'}
                       </div>
                     </div>

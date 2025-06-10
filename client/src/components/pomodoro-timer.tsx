@@ -93,7 +93,7 @@ export function PomodoroTimer() {
 
       {/* Pomodoro Session Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md" aria-describedby="pomodoro-description">
           <div className="text-center p-6">
             <div className="w-32 h-32 mx-auto mb-6 relative">
               <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 144 144">
@@ -112,23 +112,23 @@ export function PomodoroTimer() {
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-3xl font-mono font-bold text-gray-900">{formatTime(timeLeft)}</span>
+                <span className="text-3xl font-mono font-bold text-gray-900 dark:text-gray-100">{formatTime(timeLeft)}</span>
               </div>
             </div>
             
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
               {sessionType === 'work' ? 'Work Session' : 'Break Time'}
             </h3>
             {currentTask && sessionType === 'work' ? (
-              <div className="mb-6">
-                <p className="text-sm text-gray-500 mb-1">Current Task:</p>
-                <p className="text-gray-900 font-medium">{currentTask.title}</p>
+              <div className="mb-6" id="pomodoro-description">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Current Task:</p>
+                <p className="text-gray-900 dark:text-gray-100 font-medium">{currentTask.title}</p>
                 {currentTask.description && (
-                  <p className="text-sm text-gray-600 mt-1">{currentTask.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{currentTask.description}</p>
                 )}
               </div>
             ) : (
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-400 mb-6" id="pomodoro-description">
                 {sessionType === 'work' ? 'Stay focused and productive!' : 'Take a well-deserved break!'}
               </p>
             )}
