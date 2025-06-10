@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -206,9 +206,12 @@ export function Notepad() {
 
       {/* Rich Text Editor Modal */}
       <Dialog open={showEditor} onOpenChange={(open) => !open && handleCancel()}>
-        <DialogContent className="max-w-4xl max-h-[80vh]" aria-describedby="note-editor-description">
+        <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>{editingNote ? 'Edit Note' : 'Create Note'}</DialogTitle>
+            <DialogDescription>
+              {editingNote ? 'Update your note content below.' : 'Create a new note with title and content.'}
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
@@ -256,14 +259,12 @@ export function Notepad() {
             )}
             
             {/* Content Area */}
-            <div id="note-editor-description">
-              <Textarea
-                placeholder="Start writing your note here..."
-                value={noteForm.content}
-                onChange={(e) => setNoteForm(prev => ({ ...prev, content: e.target.value }))}
-                className="min-h-96 resize-none"
-              />
-            </div>
+            <Textarea
+              placeholder="Start writing your note here..."
+              value={noteForm.content}
+              onChange={(e) => setNoteForm(prev => ({ ...prev, content: e.target.value }))}
+              className="min-h-96 resize-none"
+            />
             
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={handleCancel}>
