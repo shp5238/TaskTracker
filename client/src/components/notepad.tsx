@@ -133,10 +133,10 @@ export function Notepad() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">My Notes</h2>
+            <h2 className="text-xl font-semibold">My Notes</h2>
             <div className="flex items-center space-x-2">
               <Button
                 variant={isPlainText ? "default" : "outline"}
@@ -156,15 +156,15 @@ export function Notepad() {
           {/* Notes Grid */}
           {notes.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 dark:text-gray-400">No notes yet. Create your first note!</p>
+              <p className="text-muted-foreground">No notes yet. Create your first note!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {notes.map(note => (
-                <Card key={note.id} className="bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow cursor-pointer">
+                <Card key={note.id} className="hover:shadow-md transition-shadow cursor-pointer">
                   <CardContent className="p-4" onClick={() => handleEditNote(note)}>
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate flex-1">{note.title}</h3>
+                      <h3 className="font-medium truncate flex-1">{note.title}</h3>
                       <div className="flex space-x-1 ml-2">
                         <Button
                           variant="ghost"

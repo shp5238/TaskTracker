@@ -175,7 +175,7 @@ export function TodoList() {
   return (
     <div className="space-y-6">
       {/* Quick Add Form */}
-      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <Card>
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex space-x-4">
@@ -191,9 +191,9 @@ export function TodoList() {
               </Button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-gray-100 dark:border-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t">
               <div>
-                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-2">Description</label>
                 <Textarea
                   placeholder="Optional description..."
                   rows={2}
@@ -202,7 +202,7 @@ export function TodoList() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Due Date</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-2">Due Date</label>
                 <Input
                   type="date"
                   value={newTask.dueDate || ""}
@@ -210,7 +210,7 @@ export function TodoList() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Assign To</label>
+                <label className="block text-xs font-medium text-muted-foreground mb-2">Assign To</label>
                 <Select value={newTask.assignedTo || ""} onValueChange={(value) => setNewTask(prev => ({ ...prev, assignedTo: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select person..." />
@@ -269,7 +269,7 @@ export function TodoList() {
           filteredAndSortedTasks.map((task) => {
             const status = getTaskStatus(task);
             return (
-              <Card key={task.id} className={`bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow ${task.completed ? 'opacity-75' : ''}`}>
+              <Card key={task.id} className={`hover:shadow-md transition-shadow ${task.completed ? 'opacity-75' : ''}`}>
                 <CardContent className="p-4">
                   <div className="flex items-start space-x-3">
                     <Checkbox
@@ -279,7 +279,7 @@ export function TodoList() {
                     />
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className={`font-medium text-gray-900 dark:text-gray-100 ${task.completed ? 'line-through' : ''}`}>
+                        <h3 className={`font-medium ${task.completed ? 'line-through' : ''}`}>
                           {task.title}
                         </h3>
                         <div className="flex items-center space-x-2">
@@ -287,13 +287,13 @@ export function TodoList() {
                             <Badge variant="destructive">Overdue</Badge>
                           )}
                           {status === "due-soon" && (
-                            <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">Due Soon</Badge>
+                            <Badge variant="secondary" className="bg-orange-500/10 text-orange-600 dark:text-orange-400">Due Soon</Badge>
                           )}
                           {status === "completed" && (
-                            <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Completed</Badge>
+                            <Badge variant="secondary" className="bg-green-500/10 text-green-600 dark:text-green-400">Completed</Badge>
                           )}
                           {currentTask?.id === task.id && (
-                            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">Current</Badge>
+                            <Badge variant="secondary" className="bg-primary/10 text-primary">Current</Badge>
                           )}
                           <Button
                             variant="ghost"
@@ -323,11 +323,11 @@ export function TodoList() {
                         </div>
                       </div>
                       {task.description && (
-                        <p className={`text-sm text-gray-600 dark:text-gray-400 mt-1 ${task.completed ? 'line-through' : ''}`}>
+                        <p className={`text-sm text-muted-foreground mt-1 ${task.completed ? 'line-through' : ''}`}>
                           {task.description}
                         </p>
                       )}
-                      <div className="flex items-center space-x-4 mt-3 text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center space-x-4 mt-3 text-xs text-muted-foreground">
                         {task.dueDate && (
                           <span className="flex items-center">
                             <Calendar className="mr-1 h-3 w-3" />
@@ -361,7 +361,7 @@ export function TodoList() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Task Title</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Task Title</label>
               <Input
                 value={editForm.title}
                 onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
@@ -369,7 +369,7 @@ export function TodoList() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Description</label>
               <Textarea
                 value={editForm.description || ""}
                 onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
@@ -378,7 +378,7 @@ export function TodoList() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Due Date</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Due Date</label>
               <Input
                 type="date"
                 value={editForm.dueDate || ""}
@@ -386,7 +386,7 @@ export function TodoList() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assign To</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Assign To</label>
               <Select value={editForm.assignedTo || ""} onValueChange={(value) => setEditForm(prev => ({ ...prev, assignedTo: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select person..." />
