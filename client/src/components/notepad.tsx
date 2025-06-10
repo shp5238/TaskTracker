@@ -190,10 +190,10 @@ export function Notepad() {
                         </Button>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
                       {note.content.substring(0, 100)}{note.content.length > 100 ? '...' : ''}
                     </p>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-muted-foreground">
                       Last edited: {formatLastEdited(note.updatedAt)}
                     </div>
                   </CardContent>
