@@ -83,10 +83,10 @@ export function CalendarView() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{getMonthName(currentDate)}</h2>
+            <h2 className="text-xl font-semibold">{getMonthName(currentDate)}</h2>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm" onClick={goToPreviousMonth}>
                 <ChevronLeft className="h-4 w-4" />
@@ -104,7 +104,7 @@ export function CalendarView() {
           <div className="grid grid-cols-7 gap-1">
             {/* Day Headers */}
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="p-3 text-center text-xs font-medium text-gray-500">
+              <div key={day} className="p-3 text-center text-xs font-medium text-muted-foreground">
                 {day}
               </div>
             ))}
@@ -117,16 +117,16 @@ export function CalendarView() {
               return (
                 <div
                   key={index}
-                  className={`min-h-20 p-2 border border-gray-100 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${
-                    isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20 border-primary' : 'bg-white dark:bg-gray-800'
+                  className={`min-h-20 p-2 border hover:bg-muted cursor-pointer ${
+                    isCurrentDay ? 'bg-primary/10 border-primary' : 'bg-card'
                   }`}
                 >
                   <div className={`text-sm ${
                     day.isCurrentMonth 
                       ? isCurrentDay 
                         ? 'text-primary font-semibold' 
-                        : 'text-gray-900 dark:text-gray-100'
-                      : 'text-gray-400 dark:text-gray-500'
+                        : 'text-foreground'
+                      : 'text-muted-foreground'
                   }`}>
                     {day.date.getDate()}
                   </div>
@@ -149,7 +149,7 @@ export function CalendarView() {
                       </div>
                     ))}
                     {dayTasks.length > 2 && (
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-muted-foreground">
                         +{dayTasks.length - 2} more
                       </div>
                     )}
@@ -162,23 +162,23 @@ export function CalendarView() {
       </Card>
 
       {/* Upcoming Tasks Sidebar */}
-      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <Card>
         <CardContent className="p-6">
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Upcoming Tasks</h3>
+          <h3 className="font-semibold mb-4">Upcoming Tasks</h3>
           {upcomingTasks.length === 0 ? (
-            <p className="text-gray-500 text-sm">No upcoming tasks</p>
+            <p className="text-muted-foreground text-sm">No upcoming tasks</p>
           ) : (
             <div className="space-y-3">
               {upcomingTasks.map(task => {
                 const isOverdue = new Date(task.dueDate!) < new Date();
                 return (
-                  <div key={task.id} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <div key={task.id} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted">
                     <div className={`w-3 h-3 rounded-full ${
-                      isOverdue ? 'bg-red-500' : 'bg-orange-500'
+                      isOverdue ? 'bg-destructive' : 'bg-orange-500'
                     }`}></div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{task.title}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-sm font-medium">{task.title}</div>
+                      <div className="text-xs text-muted-foreground">
                         {new Date(task.dueDate!).toLocaleDateString()} - {isOverdue ? 'Overdue' : 'Due soon'}
                       </div>
                     </div>
