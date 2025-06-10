@@ -1,13 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Play, Pause, Square, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { usePomodoro } from "@/hooks/use-pomodoro";
 import { connectSpotify, connectYoutube, connectAppleMusic } from "@/lib/music-services";
+import type { Task } from "@shared/schema";
 
 export function PomodoroTimer() {
   const [showModal, setShowModal] = useState(false);
+  const [currentTask, setCurrentTask] = useState<Task | null>(null);
   const { timeLeft, isRunning, sessionType, start, pause, stop, formatTime } = usePomodoro();
+
+  useEffect(() => {
+    const getCurrentTask = () => {
+      try {
+        const stored = localStorage.getItem('currentTask');
+        return stored ? JSON.parse(stored) : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const task = getCurrentTask();
+    setCurrentTask(task);
+
+    // Listen for storage changes to update current task
+    const handleStorageChange = () => {
+      const task = getCurrentTask();
+      setCurrentTask(task);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const handleStart = () => {
     start();
@@ -94,7 +119,19 @@ export function PomodoroTimer() {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               {sessionType === 'work' ? 'Work Session' : 'Break Time'}
             </h3>
-            <p className="text-gray-600 mb-6">Stay focused and productive!</p>
+            {currentTask && sessionType === 'work' ? (
+              <div className="mb-6">
+                <p className="text-sm text-gray-500 mb-1">Current Task:</p>
+                <p className="text-gray-900 font-medium">{currentTask.title}</p>
+                {currentTask.description && (
+                  <p className="text-sm text-gray-600 mt-1">{currentTask.description}</p>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-600 mb-6">
+                {sessionType === 'work' ? 'Stay focused and productive!' : 'Take a well-deserved break!'}
+              </p>
+            )}
             
             <div className="flex justify-center space-x-4">
               <Button

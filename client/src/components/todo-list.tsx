@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit2, Trash2, Calendar, User, Check, Save, X, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -132,12 +132,12 @@ export function TodoList() {
   };
 
   // Initialize current task from localStorage
-  useState(() => {
+  useEffect(() => {
     const storedTask = getCurrentTaskFromStorage();
     if (storedTask) {
       setCurrentTask(storedTask);
     }
-  });
+  }, []);
 
   const getTaskStatus = (task: Task) => {
     if (task.completed) return "completed";
@@ -290,6 +290,26 @@ export function TodoList() {
                           {status === "completed" && (
                             <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Completed</Badge>
                           )}
+                          {currentTask?.id === task.id && (
+                            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">Current</Badge>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handleSetCurrentTask(task)}
+                            title="Set as current task"
+                          >
+                            <Target className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handleEditTask(task)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -327,6 +347,68 @@ export function TodoList() {
           })
         )}
       </div>
+
+      {/* Edit Task Dialog */}
+      <Dialog open={!!editingTask} onOpenChange={(open) => !open && handleCancelEdit()}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Task</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Task Title</label>
+              <Input
+                value={editForm.title}
+                onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                placeholder="Task title..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <Textarea
+                value={editForm.description || ""}
+                onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Task description..."
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
+              <Input
+                type="date"
+                value={editForm.dueDate || ""}
+                onChange={(e) => setEditForm(prev => ({ ...prev, dueDate: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Assign To</label>
+              <Select value={editForm.assignedTo || ""} onValueChange={(value) => setEditForm(prev => ({ ...prev, assignedTo: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select person..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="myself">Myself</SelectItem>
+                  <SelectItem value="john-doe">John Doe</SelectItem>
+                  <SelectItem value="jane-smith">Jane Smith</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={handleCancelEdit}>
+                <X className="mr-2 h-4 w-4" />
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveEdit}
+                disabled={!editForm.title.trim() || updateTaskMutation.isPending}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
