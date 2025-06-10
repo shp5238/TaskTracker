@@ -15,6 +15,9 @@ export function Notepad() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [noteForm, setNoteForm] = useState<InsertNote>({ title: "", content: "" });
+  const [isPlainText, setIsPlainText] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"saved" | "saving" | "unsaved">("saved");
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -38,10 +41,37 @@ export function Notepad() {
       apiRequest("PUT", `/api/notes/${id}`, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/notes"] });
-      setEditingNote(null);
-      toast({ title: "Note updated successfully" });
+      setAutoSaveStatus("saved");
+      if (!editingNote) {
+        toast({ title: "Note updated successfully" });
+      }
     },
   });
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (editingNote && noteForm.title.trim() && noteForm.content.trim()) {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+      
+      setAutoSaveStatus("unsaved");
+      
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        setAutoSaveStatus("saving");
+        updateNoteMutation.mutate({
+          id: editingNote.id,
+          updates: noteForm,
+        });
+      }, 2000); // Auto-save after 2 seconds of inactivity
+    }
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [noteForm, editingNote]);
 
   const deleteNoteMutation = useMutation({
     mutationFn: (id: number) => apiRequest("DELETE", `/api/notes/${id}`),
@@ -94,7 +124,7 @@ export function Notepad() {
     });
   };
 
-  const showEditor = editingNote || isCreating;
+  const showEditor = !!(editingNote || isCreating);
 
   if (isLoading) {
     return <div className="text-center py-8">Loading notes...</div>;
@@ -105,11 +135,21 @@ export function Notepad() {
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">My Notes</h2>
-            <Button onClick={handleCreateNote}>
-              <Plus className="mr-2 h-4 w-4" />
-              New Note
-            </Button>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">My Notes</h2>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant={isPlainText ? "default" : "outline"}
+                size="sm"
+                onClick={() => setIsPlainText(!isPlainText)}
+              >
+                {isPlainText ? <Type className="mr-2 h-4 w-4" /> : <FileText className="mr-2 h-4 w-4" />}
+                {isPlainText ? "Plain Text" : "Rich Text"}
+              </Button>
+              <Button onClick={handleCreateNote}>
+                <Plus className="mr-2 h-4 w-4" />
+                New Note
+              </Button>
+            </div>
           </div>
 
           {/* Notes Grid */}
@@ -179,26 +219,40 @@ export function Notepad() {
             />
             
             {/* Simple Toolbar */}
-            <div className="border-b border-gray-200 pb-2">
-              <div className="flex space-x-2">
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <Bold className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <Italic className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <Underline className="h-4 w-4" />
-                </Button>
-                <div className="w-px bg-gray-300 mx-2"></div>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <List className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <Link className="h-4 w-4" />
-                </Button>
+            {!isPlainText && (
+              <div className="border-b border-gray-200 pb-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex space-x-2">
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Bold className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Italic className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Underline className="h-4 w-4" />
+                    </Button>
+                    <div className="w-px bg-gray-300 mx-2"></div>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <List className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Link className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  {editingNote && (
+                    <div className="flex items-center space-x-2">
+                      <Badge 
+                        variant={autoSaveStatus === "saved" ? "default" : autoSaveStatus === "saving" ? "secondary" : "outline"}
+                        className="text-xs"
+                      >
+                        {autoSaveStatus === "saved" ? "Saved" : autoSaveStatus === "saving" ? "Saving..." : "Unsaved"}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
             
             {/* Content Area */}
             <Textarea

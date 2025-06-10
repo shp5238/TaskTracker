@@ -7,9 +7,11 @@ import { TodoList } from "@/components/todo-list";
 import { CalendarView } from "@/components/calendar-view";
 import { Notepad } from "@/components/notepad";
 import { useTheme } from "@/hooks/use-theme";
+import { useTaskReminders } from "@/hooks/use-task-reminders";
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
+  useTaskReminders(); // Initialize task reminder system
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">

@@ -277,7 +277,7 @@ export function TodoList() {
                     />
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className={`font-medium text-gray-900 ${task.completed ? 'line-through' : ''}`}>
+                        <h3 className={`font-medium text-gray-900 dark:text-gray-100 ${task.completed ? 'line-through' : ''}`}>
                           {task.title}
                         </h3>
                         <div className="flex items-center space-x-2">
