@@ -321,11 +321,11 @@ export function TodoList() {
                         </div>
                       </div>
                       {task.description && (
-                        <p className={`text-sm text-gray-600 mt-1 ${task.completed ? 'line-through' : ''}`}>
+                        <p className={`text-sm text-gray-600 dark:text-gray-400 mt-1 ${task.completed ? 'line-through' : ''}`}>
                           {task.description}
                         </p>
                       )}
-                      <div className="flex items-center space-x-4 mt-3 text-xs text-gray-500">
+                      <div className="flex items-center space-x-4 mt-3 text-xs text-gray-500 dark:text-gray-400">
                         {task.dueDate && (
                           <span className="flex items-center">
                             <Calendar className="mr-1 h-3 w-3" />
