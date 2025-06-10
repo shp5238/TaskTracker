@@ -119,6 +119,8 @@ export function TodoList() {
   const handleSetCurrentTask = (task: Task) => {
     setCurrentTask(task);
     localStorage.setItem('currentTask', JSON.stringify(task));
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new CustomEvent('currentTaskUpdated'));
     toast({ title: "Current task set", description: `Now focusing on: ${task.title}` });
   };
 
@@ -381,7 +383,7 @@ export function TodoList() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Assign To</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assign To</label>
               <Select value={editForm.assignedTo || ""} onValueChange={(value) => setEditForm(prev => ({ ...prev, assignedTo: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select person..." />

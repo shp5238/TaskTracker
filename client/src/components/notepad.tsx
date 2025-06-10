@@ -99,6 +99,7 @@ export function Notepad() {
         id: editingNote.id,
         updates: noteForm,
       });
+      setEditingNote(null);
     } else {
       createNoteMutation.mutate(noteForm);
     }
@@ -132,7 +133,7 @@ export function Notepad() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">My Notes</h2>
@@ -155,15 +156,15 @@ export function Notepad() {
           {/* Notes Grid */}
           {notes.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">No notes yet. Create your first note!</p>
+              <p className="text-gray-500 dark:text-gray-400">No notes yet. Create your first note!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {notes.map(note => (
-                <Card key={note.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                <Card key={note.id} className="bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow cursor-pointer">
                   <CardContent className="p-4" onClick={() => handleEditNote(note)}>
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-medium text-gray-900 truncate flex-1">{note.title}</h3>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate flex-1">{note.title}</h3>
                       <div className="flex space-x-1 ml-2">
                         <Button
                           variant="ghost"
@@ -189,10 +190,10 @@ export function Notepad() {
                         </Button>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 line-clamp-3 mb-3">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">
                       {note.content.substring(0, 100)}{note.content.length > 100 ? '...' : ''}
                     </p>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       Last edited: {formatLastEdited(note.updatedAt)}
                     </div>
                   </CardContent>
@@ -205,7 +206,7 @@ export function Notepad() {
 
       {/* Rich Text Editor Modal */}
       <Dialog open={showEditor} onOpenChange={(open) => !open && handleCancel()}>
-        <DialogContent className="max-w-4xl max-h-[80vh]">
+        <DialogContent className="max-w-4xl max-h-[80vh]" aria-describedby="note-editor-description">
           <DialogHeader>
             <DialogTitle>{editingNote ? 'Edit Note' : 'Create Note'}</DialogTitle>
           </DialogHeader>
@@ -255,12 +256,14 @@ export function Notepad() {
             )}
             
             {/* Content Area */}
-            <Textarea
-              placeholder="Start writing your note here..."
-              value={noteForm.content}
-              onChange={(e) => setNoteForm(prev => ({ ...prev, content: e.target.value }))}
-              className="min-h-96 resize-none"
-            />
+            <div id="note-editor-description">
+              <Textarea
+                placeholder="Start writing your note here..."
+                value={noteForm.content}
+                onChange={(e) => setNoteForm(prev => ({ ...prev, content: e.target.value }))}
+                className="min-h-96 resize-none"
+              />
+            </div>
             
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={handleCancel}>

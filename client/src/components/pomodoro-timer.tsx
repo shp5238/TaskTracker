@@ -25,13 +25,26 @@ export function PomodoroTimer() {
     setCurrentTask(task);
 
     // Listen for storage changes to update current task
-    const handleStorageChange = () => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'currentTask') {
+        const task = getCurrentTask();
+        setCurrentTask(task);
+      }
+    };
+
+    // Custom event listener for same-window updates
+    const handleCustomStorageEvent = () => {
       const task = getCurrentTask();
       setCurrentTask(task);
     };
 
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('currentTaskUpdated', handleCustomStorageEvent);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('currentTaskUpdated', handleCustomStorageEvent);
+    };
   }, []);
 
   const handleStart = () => {
